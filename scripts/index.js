@@ -17,13 +17,9 @@ function createCard(title, img) {
 }
 
 // @todo: Функция удаления карточки
-function deleteCard(evt) {
-  console.log(evt.target.parentElement)
-  evt.target.parentElement.remove();
-}
+const deleteCard = (evt) =>  evt.target.parentElement.remove();
 
 // @todo: Вывести карточки на страницу
 initialCards.forEach(function (elem) {
-  
   cardList.append(createCard(elem.name, elem.link));
 })
