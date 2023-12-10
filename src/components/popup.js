@@ -1,8 +1,10 @@
+import {likeCard} from './cards.js';
+import {editForm, popupImage, profileDescription, profileTitle} from '../index.js';
+
 const closePopup = {
   click: function (evt) {
     if (evt.target.classList.contains('popup__close') || evt.target.classList.contains('popup')) {
       evt.currentTarget.classList.remove('popup_is-opened');
-      // evt.currentTarget.removeEventListener('click', closePopup); // удаление слушателя
     }
   },
 
@@ -14,34 +16,35 @@ const closePopup = {
   }
 }
 
-function addPopupListener(popup) {
-  popup.classList.toggle('popup_is-opened');  
+// обработчик кнопки в редакторе профиля
+function handleFormSubmit(evt) {
+  evt.preventDefault();
+  profileTitle.textContent = editForm.elements.name.value;
+  profileDescription.textContent = editForm.elements.description.value;
+  document.querySelector(".popup_is-opened").classList.remove('popup_is-opened');
+}
+
+// добавление слушателей
+function addPopupListener(evt, popup) {
+  // попап изображения
+  if (popup.classList.contains('popup_type_image')) {
+    const popupImage = popup.querySelector('.popup__image');
+    const popupCaption = popup.querySelector('.popup__caption');
+    popupImage.src = evt.target.src;
+    popupCaption.textContent = evt.target.alt;    
+  }
+  // открыть и добавить слушатели на закрытие
+  popup.classList.add('popup_is-opened');  
   popup.addEventListener('click', closePopup.click);
   document.addEventListener('keydown', closePopup.escape);
 }
 
-export {addPopupListener};
-
-/*
-editButton.addEventListener('click', function(evt){
-  let closeButton = popupEdit.querySelector('.popup__close');
-  popupEdit.setAttribute("open", "");  
-  closeButton.addEventListener('click', () => popupEdit.removeAttribute("open", ""));
-});
-*/
-
-/*
-function closePopup(evt) {
-  if (evt.target.classList.contains('popup__close') || evt.target.classList.contains('popup')) {
-    evt.currentTarget.classList.remove('popup_is-opened');
-    // evt.currentTarget.removeEventListener('click', closePopup); // удаление слушателя
+// обработчик слушателя лайка и открытия карточки
+function handleImage(evt) {
+  likeCard(evt);
+  if (evt.target.classList.contains('card__image')) {
+    addPopupListener(evt, popupImage);
   }
 }
 
-function closePopupEsc(evt) {
-  if (evt.key === 'Escape') {
-    document.querySelector(".popup_is-opened").classList.remove('popup_is-opened'); // находим открытый попап и удаляем класс
-    document.removeEventListener('keydown', closePopupEsc); // удаление слушателя
-  }
-}
-*/
+export {addPopupListener, handleFormSubmit, handleImage};
