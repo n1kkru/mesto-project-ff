@@ -32,24 +32,4 @@ const initialCards = [
     }
 ];
 
-// Функция создания карточки
-function createCard(template, title, img, handler, handlerLike) {
-  const cardElem = template.querySelector('.card').cloneNode(true);
-  const cardImage = cardElem.querySelector('.card__image');
-  cardImage.src = img;
-  cardImage.alt = title;
-  cardElem.querySelector('.card__title').textContent = title;
-  cardElem.querySelector('.card__delete-button').addEventListener('click', handler); 
-
-  return cardElem;
-}
-
-// Функция удаления карточки
-const deleteCard = (evt) =>  evt.target.parentElement.remove();
-
-// Функция лайка
-const likeCard = (evt) => { if (evt.target.classList.contains('card__like-button')) {
-  evt.target.classList.toggle('card__like-button_is-active');
-}}
-
-export {initialCards, createCard, deleteCard, likeCard};
+export {initialCards};
