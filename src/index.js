@@ -1,8 +1,8 @@
 // Импорты
 import './index.css';
 import {initialCards} from './components/cards.js';
-import {createCard, deleteCard, likeCard, handleImage} from './components/card.js';
-import {openModal, closeModal} from './components/modal.js';
+import {createCard, deleteCard, likeCard} from './components/card.js';
+import {openModal, closeModal, closeByClick} from './components/modal.js';
 
 
 // DOM узлы
@@ -11,6 +11,7 @@ const cardList = document.querySelector('.places__list');
 // модальные окна
 const popupEdit = document.querySelector('.popup_type_edit');
 const popupNewCard = document.querySelector('.popup_type_new-card');
+const popupImage = document.querySelector('.popup_type_image');
 // кнопки
 const editButton = document.querySelector('.profile__edit-button');
 const addButton = document.querySelector('.profile__add-button');
@@ -26,6 +27,9 @@ const newCardLink = addForm.elements['link'];
 // поля формы редактирования
 const editProfileName = editForm.elements['name']; 
 const editProfileDesc = editForm.elements['description']; 
+// данные попапа изобрадения
+const popupContentImage = popupImage.querySelector('.popup__image');
+const popupCaption = popupImage.querySelector('.popup__caption');
 
 
 // Вывести карточки на страницу
@@ -33,10 +37,13 @@ initialCards.forEach((elem) => {
   cardList.append(createCard(elem.name, elem.link, deleteCard, likeCard, handleImage));
 });
 
-// Сделаем плавно всем попапам
+// Сделаем плавно всем попапам и добавим слушатель закрытия по клику
 document.querySelectorAll('.popup').forEach( (pop) => {
   pop.classList.add('popup_is-animated');
+  pop.addEventListener('click', closeByClick);
 });
+
+
 
 
 // Слушатель открытия окна редактирования
@@ -59,7 +66,7 @@ addButton.addEventListener('click', () => {
 addForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
   const newElem = createCard(newCardTitle.value, newCardLink.value, deleteCard, likeCard, handleImage);
-  cardList.prepend(newElem, cardList.firstChild);
+  cardList.prepend(newElem);
   closeModal(popupNewCard);
 });
 
@@ -69,4 +76,12 @@ function handleFormSubmit(evt) {
   profileTitle.textContent = editProfileName.value;
   profileDescription.textContent = editProfileDesc.value;
   closeModal(popupEdit);
+}
+
+// Функция открытия изображения
+function handleImage(evt) {
+  popupContentImage.src = evt.target.src;
+  popupContentImage.alt = evt.target.alt;
+  popupCaption.textContent = evt.target.alt;    
+  openModal(popupImage);
 }

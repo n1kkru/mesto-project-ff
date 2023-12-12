@@ -1,14 +1,14 @@
 // открытие модального окна
 function openModal(popup) {
   popup.classList.add('popup_is-opened');
-  popup.addEventListener('click', closeByClick);
+  // popup.addEventListener('click', closeByClick);
   document.addEventListener('keydown', closeByEsc);
 } 
 
 // закрытие модального окна
 function closeModal(popup) {
   popup.classList.remove('popup_is-opened');
-  popup.removeEventListener('click', closeByClick);
+  // popup.removeEventListener('click', closeByClick);
   document.removeEventListener('keydown', closeByEsc);
 }
 
@@ -23,9 +23,9 @@ function closeByEsc(evt) {
 // закртыие по нажатию
 function closeByClick(evt) {
   if (evt.target.classList.contains('popup__close') || evt.target.classList.contains('popup')) {
-    const openedPopup  = document.querySelector(".popup_is-opened");
+    const openedPopup  = evt.currentTarget;
     closeModal(openedPopup);
   } 
 }
 
-export {openModal, closeModal};
+export {openModal, closeModal, closeByClick};
