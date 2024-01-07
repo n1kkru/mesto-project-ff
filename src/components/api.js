@@ -10,8 +10,15 @@ const getUser = () => {
     method: 'GET',
     headers: config.headers
   })
-  .then(res => res.json())
-
+  .then(res => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 }
 
 const getInitialCards = () => {
@@ -19,7 +26,15 @@ const getInitialCards = () => {
       method: 'GET',
       headers: config.headers
     })
-    .then(res => res.json())
+    .then(res => {
+      if (res.ok) {
+        return res.json();
+      }
+      return Promise.reject(`Ошибка: ${res.status}`);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
 const updateProfile = (name, about) => {
@@ -44,6 +59,39 @@ const postCard = (name, link) => {
   });
 }
 
+const updateLikeValue = (cardId, isLiked) => {
+  if (isLiked) {
+    return fetch(config.baseUrl+'/cards/likes/' + cardId, {
+      method: 'DELETE',
+      headers: config.headers
+    });
+  }
+  else {
+    return fetch(config.baseUrl+'/cards/likes/' + cardId, {
+      method: 'PUT',
+      headers: config.headers
+    });
 
-export {getUser, getInitialCards, updateProfile, postCard} 
+  }
+}
+
+const removeCard = (cardId) => {
+  return fetch(config.baseUrl + '/cards/' + cardId, {
+    method: 'DELETE',
+    headers: config.headers,
+  });
+}
+
+const updateAvatar = (avatar) => {
+  return fetch(config.baseUrl+'/users/me/avatar', {
+    method: 'PATCH',
+    headers: config.headers,
+    body: JSON.stringify({
+      avatar
+    })
+  });
+
+}
+
+export {getUser, getInitialCards, updateProfile, postCard, updateLikeValue, removeCard, updateAvatar} 
 

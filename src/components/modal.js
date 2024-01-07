@@ -1,14 +1,12 @@
 // открытие модального окна
 function openModal(popup) {
   popup.classList.add('popup_is-opened');
-  // popup.addEventListener('click', closeByClick);
   document.addEventListener('keydown', closeByEsc);
 } 
 
 // закрытие модального окна
 function closeModal(popup) {
   popup.classList.remove('popup_is-opened');
-  // popup.removeEventListener('click', closeByClick);
   document.removeEventListener('keydown', closeByEsc);
 }
 

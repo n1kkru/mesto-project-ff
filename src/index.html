@@ -12,15 +12,15 @@
   <header class="header page__section">
     <img 
       src=" <%=require('../images/logo.svg')%> " 
-      alt="Логотип проекта масто" 
+      alt="Логотип проекта место" 
       class="logo header__logo">
   </header>
   <main class="content">
     <section class="profile page__section">
       <div 
-        class="profile__image" 
-        style="background-image: url( '<%=require(`../images/avatar.jpg`)%>') "
+        class="profile__image-block" 
       >
+        <img class="profile__image" src="" alt="">
       </div>
       <div class="profile__info">
         <h1 class="profile__title">Загрузка...</h1>
@@ -117,6 +117,37 @@
       <p class="popup__caption"></p>
     </div>
   </div>
+
+  <!-- <div id="popup_type_confirm" class="popup popup_type_confirm">
+    <div class="popup__content">
+      <button type="button" class="popup__close"></button>
+      <h3 class="popup__title">Редактировать профиль</h3>
+      <button type="submit" class="button popup__button">Да</button>
+    </div>
+  </div> -->
+
+  <div id="popup_type_avatar" class="popup popup_type_avatar">
+    <div class="popup__content">
+      <button type="button" class="popup__close"></button>
+      <h3 class="popup__title">Обновить аватар</h3>
+      <form class="popup__form" name="avatar-change">
+        <input 
+          type="text"
+          name="avatar-link"
+          id="avatar-link-input"
+          class="popup__input popup__input_type_avatar-link "
+          placeholder="Название"
+          required
+          pattern="^https?:\/\/[a-zA-Z0-9@:%._\+~#=\-\/]{1,}"
+          data-error-message="Нужна ссылка"
+        >
+        <span class="popup__message-error avatar-link-input-error popup__message-error-activ"></span>
+        <button type="submit" class="button popup__button">Сохранить</button>
+      </form>
+    </div>
+  </div>
+
+
 </div>
 
 <template id="card-template">
@@ -126,7 +157,10 @@
     <div class="card__description">
       <h2 class="card__title">
       </h2>
-      <button type="button" class="card__like-button"></button>
+      <div class="card__like">
+        <button type="button" class="card__like-button"></button>
+        <span class="card__like-value">0</span>
+      </div>
     </div>
   </li>
 </template>
