@@ -54,11 +54,6 @@ function createCard(cardInfo, handlerDelete, handlerLike, handlerOpenImage) {
     handlerLike(evt);
     // вносим изменения на сервер и изменяем число лайков
     updateLikeValue(cardId, isLiked)
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        }
-      })
       .then( (data) => {
         cardLikeValue.textContent = data.likes.length;
       })

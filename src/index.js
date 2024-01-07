@@ -16,27 +16,40 @@ const popupAvatarChange = document.querySelector('.popup_type_avatar');
 // const popupConfirm = document.querySelector('.popup_type_confirm');
 
 // кнопки
-const editButton = document.querySelector('.profile__edit-button');
-const addButton = document.querySelector('.profile__add-button');
+const submitAvatarButton = popupAvatarChange.querySelector('.popup__button');
+const submitbuttonOpenEditProfilePopup = popupEdit.querySelector('.popup__button');
+const submitNewCardButton = popupNewCard.querySelector('.popup__button');
+const buttonOpenEditProfilePopup = document.querySelector('.profile__edit-button');
+const buttonOpenAddCardPopup = document.querySelector('.profile__add-button');
 // аватар, имя профиля и подпись
+const allPopup = document.querySelectorAll('.popup');
 const profileImage = document.querySelector('.profile__image');
 const profileTitle = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
 // формы 
-const editForm = document.forms['edit-profile'];
-const addForm = document.forms['new-place'];
+const formEditProfile = document.forms['edit-profile'];
+const formAddCard = document.forms['new-place'];
 const avatarForm = document.forms['avatar-change'];
 // поля формы добавления
-const newCardTitle = addForm.elements['place-name'];
-const newCardLink = addForm.elements['link'];
+const newCardTitle = formAddCard.elements['place-name'];
+const newCardLink = formAddCard.elements['link'];
 // поля формы редактирования
-const editProfileName = editForm.elements['name']; 
-const editProfileDesc = editForm.elements['description']; 
+const editProfileName = formEditProfile.elements['name']; 
+const editProfileDesc = formEditProfile.elements['description']; 
 // данные попапа изображения
 const popupContentImage = popupImage.querySelector('.popup__image');
 const popupCaption = popupImage.querySelector('.popup__caption');
 // поля ссылки на аватар
 const avatarLink = avatarForm.elements['avatar-link'];
+
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input-error',
+  errorClass: 'popup__message-error-activ'
+};
 
 Promise.all([getUser(), getInitialCards()])
   .then(([userData, cardsData]) => {
@@ -65,73 +78,63 @@ Promise.all([getUser(), getInitialCards()])
   });
 
 // Сделаем плавно всем попапам и добавим слушатель закрытия по клику
-document.querySelectorAll('.popup').forEach( (pop) => {
-  pop.classList.add('popup_is-animated');
-  pop.addEventListener('click', closeByClick);
+allPopup.forEach( (popup) => {
+  popup.classList.add('popup_is-animated');
+  popup.addEventListener('click', closeByClick);
 });
 
-enableValidation({
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__button',
-  inactiveButtonClass: 'popup__button_disabled',
-  inputErrorClass: 'popup__input-error',
-  errorClass: 'popup__message-error-activ'
-});
+enableValidation(validationConfig);
+
 
 // Слушатель открытия окна изменения автара
 profileImage.addEventListener('click', () => {
-  popupAvatarChange.querySelector('.popup__button').textContent = 'Сохранить';
+  clearValidation(validationConfig, avatarForm);
+  submitAvatarButton.textContent = 'Сохранить';
   openModal(popupAvatarChange);
-  avatarLink.value = profileImage.src;
 })
 // Слушатель кнопки применить
 popupAvatarChange.addEventListener('submit', (evt) => {
-  popupAvatarChange.querySelector('.popup__button').textContent = 'Сохранение...';
+  submitAvatarButton.textContent = 'Сохранение...';
   evt.preventDefault();
-  profileImage.src = avatarLink.value;
   updateAvatar(avatarLink.value)
+    .then( () => {
+      profileImage.src = avatarLink.value;
+      closeModal(popupAvatarChange);
+    })
     .catch((err) => {
       console.log(err);
     })
-    .finally( () => {
-      closeModal(popupAvatarChange);
-    });
 });
 
 
 // Слушатель открытия окна редактирования
-editButton.addEventListener('click', () => {
-  editForm.querySelector('.popup__button').textContent = 'Сохранить';
-  clearValidation(editForm, {
-    inputSelector: '.popup__input',
-    submitButtonSelector: '.popup__button',
-    inputErrorClass: 'popup__input-error',
-    errorClass: 'popup__message-error-activ'
-  });
+buttonOpenEditProfilePopup.addEventListener('click', () => {
+  clearValidation(validationConfig, formEditProfile);
 
+  submitbuttonOpenEditProfilePopup.textContent = 'Сохранить';
   editProfileName.value = profileTitle.textContent;
   editProfileDesc.value = profileDescription.textContent;
+
   openModal(popupEdit);
 });
 // Слушатель кнопки применить
-editForm.addEventListener('submit', handlerFormSubmit);
+formEditProfile.addEventListener('submit', submitEditProfileForm);
 
 
 // Слушатель открытия окна добавления
-addButton.addEventListener('click', () => {
-  addForm.querySelector('.popup__button').textContent = 'Сохранить';
+buttonOpenAddCardPopup.addEventListener('click', () => {
+  clearValidation(validationConfig, formAddCard);
+  submitNewCardButton.textContent = 'Сохранить';
   openModal(popupNewCard);
-  addForm.reset();
+  formAddCard.reset();
 });
 // Слушатель кнопки применить
-addForm.addEventListener('submit', (evt) => {
+formAddCard.addEventListener('submit', (evt) => {
   evt.preventDefault();
-  popupNewCard.querySelector('.popup__button').textContent = 'Сохранение...';
+  submitNewCardButton.textContent = 'Сохранение...';
 
   // отправить данные на сервер
   postCard(newCardTitle.value, newCardLink.value)
-      .then( (res) => res.json())
       .then( (data) => {
         const myID = getUser().then( user => user._id);
         const newElem = createCard(
@@ -142,27 +145,27 @@ addForm.addEventListener('submit', (evt) => {
           isAuthor: true,
           myID: myID},
           deleteElement, likeCard, handlerImage);
-        cardList.prepend(newElem);;
+        cardList.prepend(newElem);
+      closeModal(popupNewCard);
       })
       .catch((err) => {
         console.log(err);
       })
-      .finally( () => {
-        closeModal(popupNewCard)});
 });
 
 // обработчик кнопки в редакторе профиля
-function handlerFormSubmit(evt) {
+function submitEditProfileForm(evt) {
   evt.preventDefault(); 
-  popupEdit.querySelector('.popup__button').textContent = 'Сохранение...';
-  profileTitle.textContent = editProfileName.value;
-  profileDescription.textContent = editProfileDesc.value;
-  // обновление данных на сервере
+  submitbuttonOpenEditProfilePopup.textContent = 'Сохранение...';
   updateProfile(profileTitle.textContent, profileDescription.textContent)
+    .then( () => {
+      profileTitle.textContent = editProfileName.value;
+      profileDescription.textContent = editProfileDesc.value;
+      closeModal(popupEdit);
+    })
     .catch((err) => {
       console.log(err);
     })
-    .finally( () => {closeModal(popupEdit)});
 }
 
 // Функция открытия изображения

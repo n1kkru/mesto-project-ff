@@ -7,10 +7,11 @@
   errorClass: '.popup__message-error-active'
 }*/
 
-const clearValidation = (formElem, config) => {
+const clearValidation = (config, formElem) => {
   const inputList = Array.from(formElem.querySelectorAll(config.inputSelector));
   const buttonElement = formElem.querySelector(config.submitButtonSelector);
   inputList.forEach((inputElement) => {
+    inputElement.value = '';
     hideError(config, formElem, inputElement);
     toggleButtonState(config, inputList, buttonElement);
   });
@@ -22,33 +23,33 @@ const hasValidInput = (inputList) => {
   });
 }
 
-const toggleButtonState = (formObject, inputList, buttonElement) => {
+const toggleButtonState = (config, inputList, buttonElement) => {
   if (hasValidInput(inputList)) {
-    buttonElement.classList.remove(formObject.inactiveButtonClass);
+    buttonElement.classList.remove(config.inactiveButtonClass);
     buttonElement.disabled = false;
   }
   else {
-    buttonElement.classList.add(formObject.inactiveButtonClass);
+    buttonElement.classList.add(config.inactiveButtonClass);
     buttonElement.disabled = true;
   }
 }
 
-const showError = (formObject, formElement, inputElement, errorMessage) => {
+const showError = (config, formElement, inputElement, errorMessage) => {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
-  inputElement.classList.add(formObject.inputErrorClass); // красная линия ошибки
+  inputElement.classList.add(config.inputErrorClass); // красная линия ошибки
   errorElement.textContent = errorMessage;          // текст ошибки
-  errorElement.classList.add(formObject.errorClass); // показать ошибку
+  errorElement.classList.add(config.errorClass); // показать ошибку
 };
 
-const hideError = (formObject, formElement, inputElement) => {
+const hideError = (config, formElement, inputElement) => {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
-  inputElement.classList.remove(formObject.inputErrorClass); // красная линия ошибки
-  errorElement.classList.remove(formObject.errorClass);
+  inputElement.classList.remove(config.inputErrorClass);
+  errorElement.classList.remove(config.errorClass);
   errorElement.textContent = '';
 };
 
 // проверка валидности
-const checkInputValidity = (formObject, formElement, inputElement) => {
+const checkInputValidity = (config, formElement, inputElement) => {
   if (inputElement.validity.patternMismatch) {
     inputElement.setCustomValidity(inputElement.dataset.errorMessage);
   } else {
@@ -56,33 +57,34 @@ const checkInputValidity = (formObject, formElement, inputElement) => {
   }
 
   if (!inputElement.validity.valid) {
-    showError(formObject, formElement, inputElement, inputElement.validationMessage);
+    showError(config, formElement, inputElement, inputElement.validationMessage);
   } else {
-    hideError(formObject, formElement, inputElement);
+    hideError(config, formElement, inputElement);
   }
 };
 
 // добавление слушателей
-const setEventListeners = (formObject, formElement) => {
-  const inputList = Array.from(formElement.querySelectorAll(formObject.inputSelector));
-  const buttonElement = formElement.querySelector(formObject.submitButtonSelector);
-  // toggleButtonState(formObject, inputList, buttonElement);
+const setEventListeners = (config, formElement) => {
+  const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
+  const buttonElement = formElement.querySelector(config.submitButtonSelector);
+  
+  toggleButtonState(config, inputList, buttonElement);
   inputList.forEach((inputElement) => {
     inputElement.addEventListener('input', () => {
-      checkInputValidity(formObject, formElement, inputElement);
-      toggleButtonState(formObject, inputList, buttonElement);
+      checkInputValidity(config, formElement, inputElement);
+      toggleButtonState(config, inputList, buttonElement);
     });
   });
 };
 
-function enableValidation(formObject) {
-  const formList = Array.from(document.querySelectorAll(formObject.formSelector));
+function enableValidation(config) {
+  const formList = Array.from(document.querySelectorAll(config.formSelector));
   formList.forEach(formElement => {
     formElement.addEventListener('submit', (evt) => {
       evt.preventDefault();
     });
     
-    setEventListeners(formObject, formElement);
+    setEventListeners(config, formElement);
   });
 }
 

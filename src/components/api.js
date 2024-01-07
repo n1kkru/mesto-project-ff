@@ -10,15 +10,7 @@ const getUser = () => {
     method: 'GET',
     headers: config.headers
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+  .then(res => checkResponse(res))
 }
 
 const getInitialCards = () => {
@@ -26,15 +18,7 @@ const getInitialCards = () => {
       method: 'GET',
       headers: config.headers
     })
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+    .then(res => checkResponse(res))
 }
 
 const updateProfile = (name, about) => {
@@ -45,7 +29,8 @@ const updateProfile = (name, about) => {
       name,
       about
     })
-  });
+  })
+  .then(res => checkResponse(res))
 }
 
 const postCard = (name, link) => {
@@ -56,7 +41,8 @@ const postCard = (name, link) => {
       name,
       link
     })
-  });
+  })
+  .then(res => checkResponse(res))
 }
 
 const updateLikeValue = (cardId, isLiked) => {
@@ -64,14 +50,15 @@ const updateLikeValue = (cardId, isLiked) => {
     return fetch(config.baseUrl+'/cards/likes/' + cardId, {
       method: 'DELETE',
       headers: config.headers
-    });
+    })
+    .then(res => checkResponse(res))
   }
   else {
     return fetch(config.baseUrl+'/cards/likes/' + cardId, {
       method: 'PUT',
       headers: config.headers
-    });
-
+    })
+    .then(res => checkResponse(res))
   }
 }
 
@@ -79,7 +66,8 @@ const removeCard = (cardId) => {
   return fetch(config.baseUrl + '/cards/' + cardId, {
     method: 'DELETE',
     headers: config.headers,
-  });
+  })
+  .then(res => checkResponse(res))
 }
 
 const updateAvatar = (avatar) => {
@@ -89,8 +77,15 @@ const updateAvatar = (avatar) => {
     body: JSON.stringify({
       avatar
     })
-  });
+  })
+  .then(res => checkResponse(res))
+}
 
+const checkResponse = (res) => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
 }
 
 export {getUser, getInitialCards, updateProfile, postCard, updateLikeValue, removeCard, updateAvatar} 
