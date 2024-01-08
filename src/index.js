@@ -51,10 +51,11 @@ const validationConfig = {
   errorClass: 'popup__message-error-activ'
 };
 
+let myID;
+
 Promise.all([getUser(), getInitialCards()])
   .then(([userData, cardsData]) => {
-    // мое ID
-    const  myID = userData._id;
+    myID = userData._id;
 
     profileTitle.textContent = userData.name;
     profileDescription.textContent = userData.about;
@@ -136,7 +137,6 @@ formAddCard.addEventListener('submit', (evt) => {
   // отправить данные на сервер
   postCard(newCardTitle.value, newCardLink.value)
       .then( (data) => {
-        const myID = getUser().then( user => user._id);
         const newElem = createCard(
           {title: data.name,
           img: data.link,
