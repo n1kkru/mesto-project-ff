@@ -1,6 +1,5 @@
-# Проектная работа Mesto
+# Mesto. Сайт для фотографий красивых мест России
 https://n1kkru.github.io/mesto-project-ff/
-## Сайт для фотографий красивых мест России
 ![image](https://github.com/user-attachments/assets/7a39186b-9235-4238-a5f5-8a925737f891)
 
 Стек технологий: JS, HTML, CSS, Webpack
